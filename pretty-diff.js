@@ -2,7 +2,15 @@
 
 var fs = require( "fs" ),
 	exec = require( "child_process" ).exec,
-	diff = require( "./diff" );
+	diff = require( "./diff" ),
+	args = process.argv,
+	outputFile;
+    
+for (var i = 0; i < args.length; i++) {
+	if (args[i] == '--file') {
+		outputFile = (args.splice(i, 2))[1];
+	}
+}
 
 diff( process.argv.slice( 2 ).join( " " ), function( error, parsedDiff ) {
 	if ( error ) {
@@ -29,8 +37,7 @@ function generatePrettyDiff( parsedDiff ) {
 			"</div></div>";
 		}
 
-		fs.writeFileSync( "/tmp/diff.html", template.replace( "{{diff}}", diffHtml ) );
-		exec( "open /tmp/diff.html" );
+		fs.writeFileSync( outputFile || "/tmp/diff.html", template.replace( "{{diff}}", diffHtml ) );
 }
 
 var markUpDiff = function() {
